@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>제미나이 Q&A 포맷터 (메타데이터 제거)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-soft: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --danger: #dc2626;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 10px 40px rgba(15, 23, 42, 0.08);
+      --shadow-pill: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at top, #f8fafc, #eef2f7 45%, #e2e8f0 100%);
+      color: var(--text);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1120px;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      padding: 18px 18px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.06), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .shell-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+    }
+
+    .shell-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .shell-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .shell-label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    h1 span.sub {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .shell-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .shell-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill-btn {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 6px 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: var(--shadow-pill);
+    }
+
+    .pill-btn span.icon {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    .pill-btn:hover {
+      border-color: #cbd5e1;
+      color: var(--text);
+    }
+
+    .pill-btn-primary {
+      border-color: #1d4ed8;
+      background: linear-gradient(180deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+    }
+
+    .pill-btn-primary:hover {
+      filter: brightness(1.05);
+      color: #ffffff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      body {
+        padding: 16px 10px;
+      }
+      .shell {
+        border-radius: 22px;
+        padding: 14px 14px 16px;
+      }
+    }
+
+    .panel {
+      border-radius: var(--radius-lg);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 260px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 11px 6px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel-soft);
+    }
+
+    .panel-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .panel-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #1d4ed8;
+      background: var(--accent-soft);
+    }
+
+    .panel-header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .panel-body {
+      padding: 10px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      resize: vertical;
+      min-height: 220px;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    textarea::placeholder {
+      color: #94a3b8;
+    }
+
+    textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--text-muted);
+    }
+
+    .btn.primary {
+      border-color: #1d4ed8;
+      background: linear-gradient(180deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+    }
+
+    .btn.primary:hover {
+      filter: brightness(1.06);
+    }
+
+    .btn:hover:not(.primary) {
+      border-color: #94a3b8;
+      color: var(--text);
+      background: var(--panel-soft);
+    }
+
+    .btn span.icon {
+      font-size: 14px;
+    }
+
+    .status-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #10b981;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18);
+    }
+
+    .status-dot.error {
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.18);
+    }
+
+    .output-scroll {
+      flex: 1;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: #0f172a;
+      padding: 12px 14px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .output-empty {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .qa-block {
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .qa-block:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .q {
+      color: #1d4ed8;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .a {
+      color: #0f172a;
+      white-space: pre-wrap;
+    }
+
+    .meta-line {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    .badge-small {
+      border-radius: var(--radius-pill);
+      border: 1px solid #cbd5e1;
+      color: var(--text-muted);
+      padding: 1px 7px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    .shortcut {
+      font-family: var(--mono);
+      font-size: 11px;
+      background: var(--panel-soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 5px;
+    }
+
+    .toast {
+      position: fixed;
+      inset-inline: 0;
+      bottom: 18px;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .toast-inner {
+      pointer-events: auto;
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .toast-inner span.icon {
+      font-size: 14px;
+      color: #16a34a;
+    }
+
+    .toast-inner.error span.icon {
+      color: var(--danger);
+    }
+
+    .toast-inner.error {
+      border-color: rgba(220, 38, 38, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="shell-inner">
+      <header class="shell-header">
+        <div class="shell-title">
+          <div class="shell-title-row">
+            <div class="shell-label">qa-포맷터</div>
+          </div>
+          <h1>
+            제미나이 Q&amp;A 포맷터
+            <span class="sub">메타데이터 제거, 질문은 파란색 굵은 글씨로</span>
+          </h1>
+          <p class="shell-desc">
+            왼쪽에 제미나이 텍스트를 붙여넣으세요. 이 버전은
+            <code class="shortcut">From:</code>,
+            <code class="shortcut">message time:</code>,
+            <code class="shortcut"># you asked</code>,
+            <code class="shortcut"># gemini response</code> 및
+            <code class="shortcut">---</code>를 무시하고 질문과 AI의 답변만 남깁니다.
+          </p>
+        </div>
+        <div class="shell-actions">
+          <button class="pill-btn" type="button" id="loadSample">
+            <span class="icon">📎</span>
+            샘플 불러오기
+          </button>
+          <button class="pill-btn pill-btn-primary" type="button" id="downloadHtml">
+            <span class="icon">⬇️</span>
+            HTML로 다운로드
+          </button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-title">원본 제미나이 텍스트</div>
+              <div class="panel-badge">입력</div>
+            </div>
+            <div class="panel-header-right">
+              <span class="shortcut">⌘+V</span>
+              <span class="muted">여기에 붙여넣기</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <textarea id="input" placeholder="여기에 # you asked / # gemini response 블록이 포함된 제미나이 텍스트를 붙여넣으세요..."></textarea>
+            <div class="button-row">
+              <button class="btn primary" type="button" id="formatBtn">
+                <span class="icon">✨</span>
+                포맷팅
+              </button>
+              <button class="btn" type="button" id="clearBtn">
+                <span class="icon">🧹</span>
+                지우기
+              </button>
+            </div>
+            <div class="status-line" id="statusLine">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="statusText">대기 중. 제미나이 텍스트를 붙여넣고 포맷팅을 클릭하세요.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-title">포맷된 Q&amp;A</div>
+              <div class="panel-badge">출력</div>
+            </div>
+            <div class="panel-header-right">
+              <span class="badge-small">질문 = 파란색 굵은 글씨</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="button-row">
+              <button class="btn primary" type="button" id="copyRichBtn">
+                <span class="icon">📋</span>
+                서식 있는 텍스트 복사
+              </button>
+              <button class="btn" type="button" id="copyPlainBtn">
+                <span class="icon">📄</span>
+                일반 텍스트 복사
+              </button>
+            </div>
+            <div class="output-scroll" id="output">
+              <div class="output-empty">
+                포맷팅된 결과가 여기에 표시됩니다. 파란색 굵은 글씨의 질문을 구글 문서에 바로 붙여넣으려면
+                <code class="shortcut">서식 있는 텍스트 복사</code>를 사용하세요.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" style="display:none;">
+    <div class="toast-inner" id="toastInner">
+      <span class="icon" id="toastIcon">✅</span>
+      <span id="toastText">클립보드에 복사되었습니다.</span>
+    </div>
+  </div>
+
+  <script>
+    const inputEl = document.getElementById('input');
+    const formatBtn = document.getElementById('formatBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const outputEl = document.getElementById('output');
+    const copyRichBtn = document.getElementById('copyRichBtn');
+    const copyPlainBtn = document.getElementById('copyPlainBtn');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const toast = document.getElementById('toast');
+    const toastInner = document.getElementById('toastInner');
+    const toastIcon = document.getElementById('toastIcon');
+    const toastText = document.getElementById('toastText');
+    const loadSampleBtn = document.getElementById('loadSample');
+    const downloadHtmlBtn = document.getElementById('downloadHtml');
+
+    function showToast(message, isError = false) {
+      toastText.textContent = message;
+      if (isError) {
+        toastInner.classList.add('error');
+        toastIcon.textContent = '⚠️';
+      } else {
+        toastInner.classList.remove('error');
+        toastIcon.textContent = '✅';
+      }
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2200);
+    }
+
+    function setStatus(message, isError = false) {
+      statusText.textContent = message;
+      if (isError) {
+        statusDot.classList.add('error');
+      } else {
+        statusDot.classList.remove('error');
+      }
+    }
+
+    function parseGeminiExport(text) {
+      const blocks = [];
+      const lines = text.split(/\r?\n/);
+      let i = 0;
+
+      while (i < lines.length) {
+        if (lines[i].trim().toLowerCase().startsWith('# you asked')) {
+          i++;
+          const qLines = [];
+          while (i < lines.length &&
+                 !lines[i].trim().toLowerCase().startsWith('# gemini response')) {
+            const trimmed = lines[i].trim();
+            if (
+              trimmed.toLowerCase().startsWith('message time:') ||
+              trimmed.toLowerCase().startsWith('> from:') ||
+              trimmed === '---' ||
+              trimmed === ''
+            ) {
+              i++;
+              continue;
+            }
+            qLines.push(lines[i]);
+            i++;
+          }
+
+          if (i < lines.length &&
+              lines[i].trim().toLowerCase().startsWith('# gemini response')) {
+            i++;
+          }
+
+          const aLines = [];
+          while (i < lines.length &&
+                 !lines[i].trim().toLowerCase().startsWith('# you asked')) {
+            const trimmed = lines[i].trim();
+            if (
+              trimmed.toLowerCase().startsWith('message time:') ||
+              trimmed.toLowerCase().startsWith('> from:') ||
+              trimmed.toLowerCase().startsWith('# gemini response') ||
+              trimmed === '---'
+            ) {
+              i++;
+              continue;
+            }
+            aLines.push(lines[i]);
+            i++;
+          }
+
+          const question = qLines.join('\n').trim();
+          const answer = aLines.join('\n').trim();
+
+          if (question || answer) {
+            blocks.push({ question, answer });
+          }
+        } else {
+          i++;
+        }
+      }
+
+      return blocks;
+    }
+
+    function renderBlocks(blocks) {
+      if (!blocks.length) {
+        outputEl.innerHTML =
+          '<div class="output-empty">Q&A 블록을 찾을 수 없습니다. 텍스트에 <code># you asked</code>와 <code># gemini response</code> 마커가 포함되어 있는지 확인하세요.</div>';
+        return;
+      }
+      const frag = document.createDocumentFragment();
+      blocks.forEach((b, idx) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'qa-block';
+
+        if (b.question) {
+          const qEl = document.createElement('div');
+          qEl.className = 'q';
+          qEl.textContent = b.question;
+          wrap.appendChild(qEl);
+        }
+
+        if (b.answer) {
+          const aEl = document.createElement('div');
+          aEl.className = 'a';
+          aEl.textContent = b.answer;
+          wrap.appendChild(aEl);
+        }
+
+        frag.appendChild(wrap);
+      });
+      outputEl.innerHTML = '';
+      outputEl.appendChild(frag);
+    }
+
+    formatBtn.addEventListener('click', () => {
+      const raw = inputEl.value;
+      if (!raw.trim()) {
+        setStatus('포맷팅할 내용이 없습니다. 먼저 제미나이 텍스트를 붙여넣으세요.', true);
+        showToast('먼저 제미나이 텍스트를 붙여넣으세요.', true);
+        return;
+      }
+      const blocks = parseGeminiExport(raw);
+      renderBlocks(blocks);
+      if (blocks.length) {
+        setStatus(`${blocks.length}개의 Q&A 블록이 포맷팅되었습니다.`);
+      } else {
+        setStatus('Q&A 블록을 찾을 수 없습니다. 마커를 확인하세요.', true);
+      }
+    });
+
+    clearBtn.addEventListener('click', () => {
+      inputEl.value = '';
+      outputEl.innerHTML =
+        '<div class="output-empty">포맷팅된 결과가 여기에 표시됩니다. 파란색 굵은 글씨의 질문을 구글 문서에 바로 붙여넣으려면 <code class="shortcut">서식 있는 텍스트 복사</code>를 사용하세요.</div>';
+      setStatus('지워졌습니다. 제미나이 텍스트를 붙여넣고 포맷팅을 클릭하세요.');
+    });
+
+    copyRichBtn.addEventListener('click', async () => {
+      const selection = window.getSelection();
+      const range = document.createRange();
+      try {
+        range.selectNodeContents(outputEl);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        const successful = document.execCommand('copy');
+        selection.removeAllRanges();
+        if (successful) {
+          showToast('서식 있는 텍스트가 복사되었습니다.');
+        } else {
+          showToast('복사에 실패했습니다. 수동으로 선택해 보세요.', true);
+        }
+      } catch (e) {
+        selection.removeAllRanges();
+        showToast('복사 실패: ' + e.message, true);
+      }
+    });
+
+    copyPlainBtn.addEventListener('click', async () => {
+      const text = outputEl.innerText || '';
+      if (!text.trim()) {
+        showToast('아직 복사할 내용이 없습니다.', true);
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('일반 텍스트가 복사되었습니다.');
+      } catch {
+        showToast('클립보드가 차단되었습니다. 수동으로 복사하세요.', true);
+      }
+    });
+
+    loadSampleBtn.addEventListener('click', () => {
+      const sample = `> From: https://gemini.google.com/app/0b56c76930eb84e7
+
+# you asked
+
+message time: 2026-05-09 22:38:28
+
+포괄적 칭의론과 그리스도의 믿음에 대하여 부산에서 연구하고 있는 박사님에 대해서 말해줘
+
+---
+
+# gemini response
+
+부산에서 **'포괄적(또는 총체적) 칭의론'**과 **'그리스도의 믿음(*pistis Christou*)'**을 핵심적으로 연구하고 있는 대표적인 신학자는 **고신대학교(영도구 소재)**의 **박영돈 명예교수**와 **최승락 교수**를 꼽을 수 있습니다.
+
+특히 두 분은 개혁주의 신학의 전통을 지키면서도 현대 바울 신학의 난제들을 깊이 있게 다루고 있어, 부산 지역뿐만 아니라 한국 신학계 전체에서 이 주제의 권위자로 인정받고 있습니다.
+
+---
+
+# you asked
+
+message time: 2026-05-10 22:09:38
+
+또한 누구가 있을까/
+
+---
+
+# gemini response
+
+앞서 언급해 드린 박영돈, 최승락 교수님 외에도 부산 지역(특히 고신대학교와 그 학풍을 공유하는 연구자들)에서 **'그리스도의 믿음(*pistis Christou*)'**과 **'칭의의 포괄성'**을 학술적으로 깊이 파고드는 분들이 더 계십니다.`;
+      inputEl.value = sample;
+      setStatus('샘플이 불러와졌습니다. 결과를 보려면 포맷팅을 클릭하세요.');
+    });
+
+    downloadHtmlBtn.addEventListener('click', () => {
+      const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'gemini-qa-formatter-erase-meta.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast('HTML이 다운로드되었습니다.');
+    });
+  </script>
+</body>
+</html>
