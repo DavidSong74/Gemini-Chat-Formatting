@@ -1,37 +1,40 @@
-# Gemini-Chat-Formatting
-Extension for Gemini Chat Formatting
-#English
-Gemini Q&A Formatter
+# Gemini Q&A Formatter
+
+*[Korean version below](#korean-version)*
+
 A Chrome extension that removes unnecessary metadata from exported AI conversations and neatly formats them into a clean Q&A structure.
 
-💡 Why I Built This
-When exporting or backing up conversations with AI chatbots (especially Gemini), the extracted text often includes unnecessary metadata along with the actual conversation, such as sender info (> From:), message time (message time:), and divider lines (---).
+## 💡 Why I Built This
 
-Manually deleting this unnecessary text every time is quite tedious. Therefore, I built this formatter extension to strictly parse only the user's questions (# you asked) and the AI's answers (# gemini response), and to refine the text for better readability (e.g., highlighting questions in bold blue text).
+When exporting or backing up conversations with AI chatbots (especially Gemini), the extracted text often includes unnecessary metadata along with the actual conversation, such as sender info (`> From:`), message time (`message time:`), and divider lines (`---`).
 
-🔗 Required Companion Extension
+Manually deleting this unnecessary text every time is quite tedious. Therefore, I built this formatter extension to strictly parse only the user's **questions (# you asked)** and the AI's **answers (# gemini response)**, and to refine the text for better readability (e.g., highlighting questions in bold blue text).
+
+## 🔗 Required Companion Extension
+
 This extension is highly optimized to format text structures exported by the following AI conversation exporter. Please make sure to extract text using the extension below before using this formatter:
 
-AI Exporter: ChatGPT·Gemini 대화 저장 (PDF/Word/MD) | Notion 연동 | NotebookLM 지원
-🚀 How to Install
-Open Chrome and type chrome://extensions/ in the address bar to go to the extensions management page.
-Toggle on Developer mode in the top right corner of the page.
-Click the Load unpacked button in the top left corner.
-Select the downloaded folder (this repository).
-Once installed, click the puzzle icon next to the Chrome address bar to pin the extension for easy access.
-📝 How to Use
-Export and copy your Gemini conversation text using the AI Exporter extension.
-Click the Gemini Q&A Formatter extension icon to launch it.
-Paste (⌘+V / Ctrl+V) the copied original conversation text into the left input field.
-Click the [✨ Format] button.
-Check the cleanly formatted Q&A result without metadata on the right, and use [📋 Copy Rich Text] to paste it directly into Google Docs, Notion, or your blog!
+* **[AI Exporter: ChatGPT·Gemini 대화 저장 (PDF/Word/MD) | Notion 연동 | NotebookLM 지원](https://chromewebstore.google.com/detail/ai-exporter-chatgpt%C2%B7gemin/kagjkiiecagemklhmhkabbalfpbianbe)**
 
+## 🚀 How to Install
 
+1. Open Chrome and type `chrome://extensions/` in the address bar to go to the extensions management page.
+2. Toggle on **Developer mode** in the top right corner of the page.
+3. Click the **Load unpacked** button in the top left corner.
+4. Select the downloaded folder (this repository).
+5. Once installed, click the puzzle icon next to the Chrome address bar to pin the extension for easy access.
 
+## 📝 How to Use
 
+1. Export and copy your Gemini conversation text using the **AI Exporter** extension.
+2. Click the **Gemini Q&A Formatter** extension icon to launch it.
+3. Paste (⌘+V / Ctrl+V) the copied original conversation text into the left input field.
+4. Click the **[✨ Format]** button.
+5. Check the cleanly formatted Q&A result without metadata on the right, and use **[📋 Copy Rich Text]** to paste it directly into Google Docs, Notion, or your blog!
 
-#Korean
-# 제미나이 Q&A 포맷터 (Gemini Q&A Formatter)
+---
+
+<h1 id="korean-version">제미나이 Q&A 포맷터 (Gemini Q&A Formatter)</h1>
 
 AI 대화 내용을 내보낼 때 포함되는 불필요한 메타데이터를 제거하고 깔끔한 Q&A 형태로 정리해주는 크롬 확장 프로그램입니다.
 
