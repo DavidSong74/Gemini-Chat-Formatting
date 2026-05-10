@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>제미나이 Q&A 포맷터</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-soft: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.08);
+      --danger: #dc2626;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 10px 40px rgba(15, 23, 42, 0.08);
+      --shadow-pill: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      width: 780px;
+      height: 580px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(circle at top, #f8fafc, #eef2f7 45%, #e2e8f0 100%);
+      color: var(--text);
+      display: flex;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .shell {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .shell-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .shell-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .shell-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .shell-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .shell-label {
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    h1 span.sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .shell-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin: 4px 0 0 0;
+    }
+
+    .shell-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill-btn {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 4px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: var(--shadow-pill);
+    }
+
+    .pill-btn span.icon { font-size: 12px; }
+    .pill-btn:hover { border-color: #cbd5e1; color: var(--text); }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .panel {
+      border-radius: var(--radius-lg);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel-soft);
+    }
+
+    .panel-header-left { display: flex; align-items: center; gap: 6px; }
+    .panel-title { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .panel-badge {
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #1d4ed8;
+      background: var(--accent-soft);
+    }
+
+    .panel-header-right { font-size: 10px; color: var(--text-muted); }
+
+    .panel-body {
+      padding: 8px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      resize: none;
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 8px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.4;
+      outline: none;
+    }
+
+    textarea::placeholder { color: #94a3b8; }
+    textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
+
+    .button-row { display: flex; gap: 6px; }
+
+    .btn {
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--text-muted);
+    }
+
+    .btn.primary {
+      border-color: #1d4ed8;
+      background: linear-gradient(180deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+    }
+
+    .btn.primary:hover { filter: brightness(1.06); }
+    .btn:hover:not(.primary) { border-color: #94a3b8; color: var(--text); background: var(--panel-soft); }
+
+    .status-line { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .status-dot { width: 5px; height: 5px; border-radius: 999px; background: #10b981; }
+    .status-dot.error { background: var(--danger); }
+
+    .output-scroll {
+      flex: 1;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: #0f172a;
+      padding: 8px 10px;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .output-empty { font-size: 11px; color: #6b7280; }
+    .qa-block { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; }
+    .qa-block:last-child { border-bottom: none; padding-bottom: 0; }
+    .q { color: #1d4ed8; font-weight: 700; margin-bottom: 4px; }
+    .a { color: #0f172a; white-space: pre-wrap; }
+
+    .shortcut { font-family: var(--mono); font-size: 10px; background: var(--panel-soft); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; }
+    
+    .toast {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .toast-inner {
+      pointer-events: auto;
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    }
+
+    .toast-inner span.icon { font-size: 12px; color: #16a34a; }
+    .toast-inner.error span.icon { color: var(--danger); }
+    .toast-inner.error { border-color: rgba(220, 38, 38, 0.5); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="shell-inner">
+      <header class="shell-header">
+        <div class="shell-title">
+          <div class="shell-title-row">
+            <div class="shell-label">qa-포맷터</div>
+          </div>
+          <h1>제미나이 Q&amp;A 포맷터 <span class="sub">메타데이터 제거, 질문은 파란색 굵은 글씨로</span></h1>
+          <p class="shell-desc">왼쪽에 텍스트를 붙여넣으세요. 메타데이터를 무시하고 질문과 답변만 남깁니다.</p>
+        </div>
+        <div class="shell-actions">
+          <button class="pill-btn" type="button" id="loadSample">
+            <span class="icon">📎</span> 샘플 불러오기
+          </button>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-title">원본 제미나이 텍스트</div>
+              <div class="panel-badge">입력</div>
+            </div>
+            <div class="panel-header-right">
+              <span class="shortcut">⌘+V</span>
+            </div>
+          </div>
+          <div class="panel-body">
+            <textarea id="input" placeholder="여기에 제미나이 텍스트를 붙여넣으세요..."></textarea>
+            <div class="button-row">
+              <button class="btn primary" type="button" id="formatBtn">
+                <span class="icon">✨</span> 포맷팅
+              </button>
+              <button class="btn" type="button" id="clearBtn">
+                <span class="icon">🧹</span> 지우기
+              </button>
+            </div>
+            <div class="status-line" id="statusLine">
+              <span class="status-dot" id="statusDot"></span>
+              <span id="statusText">대기 중. 제미나이 텍스트를 붙여넣고 포맷팅을 클릭하세요.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-title">포맷된 Q&amp;A</div>
+              <div class="panel-badge">출력</div>
+            </div>
+            <div class="panel-header-right">질문 = 파란색 굵은 글씨</div>
+          </div>
+          <div class="panel-body">
+            <div class="button-row">
+              <button class="btn primary" type="button" id="copyRichBtn">
+                <span class="icon">📋</span> 서식 있는 텍스트 복사
+              </button>
+              <button class="btn" type="button" id="copyPlainBtn">
+                <span class="icon">📄</span> 일반 텍스트 복사
+              </button>
+            </div>
+            <div class="output-scroll" id="output">
+              <div class="output-empty">포맷팅된 결과가 여기에 표시됩니다.</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" style="display:none;">
+    <div class="toast-inner" id="toastInner">
+      <span class="icon" id="toastIcon">✅</span>
+      <span id="toastText">클립보드에 복사되었습니다.</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

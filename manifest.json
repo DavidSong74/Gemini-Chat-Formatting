@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "제미나이 Q&A 포맷터",
+  "version": "1.0",
+  "description": "제미나이 대화에서 메타데이터를 제거하고 깔끔한 Q&A 형태로 정리해주는 확장 프로그램입니다.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "제미나이 Q&A 포맷터"
+  }
+}
