@@ -11,6 +11,10 @@ https://github.com/user-attachments/assets/bc5cee70-ce9a-4d40-9ab3-31723634a319
 
 ## 💡 Why I Built This
 
+**For my father**: While researching for his PhD, he utilizes Gemini a lot and found the brainstorming and sources insightful, so much that he'd want to print them out and keep them in physical form to read over later. He found that in order to format it well though, a lot of work had to be done to go through the whole copy-pasted material to bold, indent, delete, etc. This tool now automatically takes care of it for him.
+
+I have included two tools of same function: HTML tool that you see in the demo video, and an extension.
+
 When exporting or backing up conversations with AI chatbots (e.g., Gemini, ChatGPT, Claude), the extracted text often includes unnecessary metadata along with the actual conversation, such as sender info (`> From:`), message time (`message time:`), and divider lines (`---`).
 
 Manually deleting this unnecessary text every time is quite tedious. Therefore, I built this formatter extension to strictly parse only the user's **questions (# you asked)** and the AI's **answers (eg. # gemini response)**, and to refine the text for better readability (e.g., highlighting questions in bold blue text).
