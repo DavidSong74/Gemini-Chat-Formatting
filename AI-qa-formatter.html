@@ -4,6 +4,8 @@
   <meta charset="utf-8" />
   <title>AI Q&A 채팅 포메터 (메타데이터 제거)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icon32.png" />
+  <link rel="icon" type="image/png" sizes="128x128" href="icon128.png" />
   <style>
     :root {
       --bg: #f8fafc;
@@ -74,6 +76,20 @@
       justify-content: space-between;
       margin-bottom: 16px;
       gap: 12px;
+    }
+
+    .shell-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .shell-logo {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      display: block;
     }
 
     .shell-title {
@@ -528,15 +544,18 @@
   <div class="shell">
     <div class="shell-inner">
       <header class="shell-header">
-        <div class="shell-title">
-          <div class="shell-title-row">
-            <div class="shell-label" data-i18n="label">qa-포메터</div>
+        <div class="shell-brand">
+          <img class="shell-logo" src="icon128.png" alt="" />
+          <div class="shell-title">
+            <div class="shell-title-row">
+              <div class="shell-label" data-i18n="label">qa-포메터</div>
+            </div>
+            <h1>
+              <span data-i18n="h1">AI Q&amp;A 채팅 포메터</span>
+              <span class="sub" data-i18n="sub">메타데이터 제거, 질문은 파란색 굵은 글씨로</span>
+            </h1>
+            <p class="shell-desc" data-i18n-html="desc"></p>
           </div>
-          <h1>
-            <span data-i18n="h1">AI Q&amp;A 채팅 포메터</span>
-            <span class="sub" data-i18n="sub">메타데이터 제거, 질문은 파란색 굵은 글씨로</span>
-          </h1>
-          <p class="shell-desc" data-i18n-html="desc"></p>
         </div>
         <div class="shell-actions">
           <button class="pill-btn" type="button" id="langToggle">
@@ -562,7 +581,7 @@
               <div class="panel-badge" data-i18n="inputBadge">입력</div>
             </div>
             <div class="panel-header-right">
-              <span class="shortcut">⌘+V</span>
+              <span class="shortcut">⌘+V/crtl+V</span>
               <span class="muted" data-i18n="pasteHere">여기에 붙여넣기</span>
             </div>
           </div>
