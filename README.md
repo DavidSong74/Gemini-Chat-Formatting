@@ -4,6 +4,11 @@
 
 A Chrome extension that removes unnecessary metadata from exported AI conversations and neatly formats them into a clean Q&A structure.
 
+
+https://github.com/user-attachments/assets/bc5cee70-ce9a-4d40-9ab3-31723634a319
+
+
+
 ## 💡 Why I Built This
 
 When exporting or backing up conversations with AI chatbots (e.g., Gemini, ChatGPT, Claude), the extracted text often includes unnecessary metadata along with the actual conversation, such as sender info (`> From:`), message time (`message time:`), and divider lines (`---`).
