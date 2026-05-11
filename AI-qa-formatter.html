@@ -364,7 +364,96 @@
 
     .a {
       color: #0f172a;
-      white-space: pre-wrap;
+    }
+
+    .a p {
+      margin: 4px 0 8px;
+      line-height: 1.65;
+    }
+
+    .a .md-heading {
+      font-weight: 700;
+      margin: 14px 0 4px;
+      font-size: 14px;
+      color: #0f172a;
+    }
+
+    .a blockquote {
+      margin: 10px 0;
+      padding: 8px 14px;
+      border-left: 3px solid #94a3b8;
+      background: var(--panel-soft);
+      border-radius: 4px;
+      color: var(--text);
+    }
+
+    .a blockquote p {
+      margin: 0;
+    }
+
+    .a ul,
+    .a ol {
+      margin: 6px 0 10px;
+      padding-left: 22px;
+    }
+
+    .a li {
+      margin-bottom: 4px;
+    }
+
+    .a li > ul,
+    .a li > ol {
+      margin: 4px 0 4px;
+    }
+
+    .a code {
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: var(--mono);
+      font-size: 0.9em;
+    }
+
+    .a table {
+      border-collapse: collapse;
+      margin: 10px 0;
+      width: 100%;
+      font-size: 12.5px;
+    }
+
+    .a th,
+    .a td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .a th {
+      background: var(--panel-soft);
+      font-weight: 600;
+    }
+
+    .a strong {
+      font-weight: 700;
+    }
+
+    .a em {
+      font-style: italic;
+    }
+
+    .q em {
+      font-style: italic;
+    }
+
+    .q code {
+      background: rgba(29, 78, 216, 0.08);
+      border: 1px solid rgba(29, 78, 216, 0.25);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: var(--mono);
+      font-size: 0.9em;
     }
 
     .meta-line {
@@ -753,6 +842,216 @@
       return blocks;
     }
 
+    function renderInline(text, container) {
+      let i = 0;
+      let buffer = '';
+      const flush = () => {
+        if (buffer) {
+          container.appendChild(document.createTextNode(buffer));
+          buffer = '';
+        }
+      };
+      while (i < text.length) {
+        if (text[i] === '*' && text[i + 1] === '*') {
+          const end = text.indexOf('**', i + 2);
+          if (end !== -1 && end > i + 2) {
+            flush();
+            const strong = document.createElement('strong');
+            renderInline(text.slice(i + 2, end), strong);
+            container.appendChild(strong);
+            i = end + 2;
+            continue;
+          }
+        }
+        if (text[i] === '`') {
+          const end = text.indexOf('`', i + 1);
+          if (end !== -1) {
+            flush();
+            const code = document.createElement('code');
+            code.textContent = text.slice(i + 1, end);
+            container.appendChild(code);
+            i = end + 1;
+            continue;
+          }
+        }
+        if (text[i] === '*' && text[i + 1] !== '*' && (i === 0 || text[i - 1] !== '*')) {
+          let end = -1;
+          for (let j = i + 1; j < text.length; j++) {
+            if (text[j] === '*' && text[j + 1] !== '*' && text[j - 1] !== '*') {
+              end = j;
+              break;
+            }
+          }
+          if (end !== -1 && end > i + 1) {
+            flush();
+            const em = document.createElement('em');
+            renderInline(text.slice(i + 1, end), em);
+            container.appendChild(em);
+            i = end + 1;
+            continue;
+          }
+        }
+        buffer += text[i];
+        i++;
+      }
+      flush();
+    }
+
+    function parseTableRow(line) {
+      let s = line.trim();
+      if (s.startsWith('|')) s = s.slice(1);
+      if (s.endsWith('|')) s = s.slice(0, -1);
+      return s.split('|').map((c) => c.trim());
+    }
+
+    function isTableSeparator(line) {
+      return /^\s*\|?\s*:?-{2,}:?(\s*\|\s*:?-{2,}:?)+\s*\|?\s*$/.test(line || '');
+    }
+
+    function renderMarkdown(text, container) {
+      const lines = text.split(/\r?\n/);
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        if (trimmed === '' || trimmed === '---') {
+          i++;
+          continue;
+        }
+
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+        if (headingMatch) {
+          const h = document.createElement('p');
+          h.className = 'md-heading';
+          const strong = document.createElement('strong');
+          renderInline(headingMatch[2], strong);
+          h.appendChild(strong);
+          container.appendChild(h);
+          i++;
+          continue;
+        }
+
+        if (trimmed.startsWith('>')) {
+          const quoteLines = [];
+          while (i < lines.length && lines[i].trim().startsWith('>')) {
+            quoteLines.push(lines[i].trim().replace(/^>\s?/, ''));
+            i++;
+          }
+          const blockquote = document.createElement('blockquote');
+          const p = document.createElement('p');
+          renderInline(quoteLines.join(' '), p);
+          blockquote.appendChild(p);
+          container.appendChild(blockquote);
+          continue;
+        }
+
+        if (trimmed.startsWith('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
+          const headerCells = parseTableRow(trimmed);
+          i += 2;
+          const rows = [];
+          while (i < lines.length && lines[i].trim().startsWith('|')) {
+            rows.push(parseTableRow(lines[i]));
+            i++;
+          }
+          const table = document.createElement('table');
+          const thead = document.createElement('thead');
+          const headerRow = document.createElement('tr');
+          headerCells.forEach((cell) => {
+            const th = document.createElement('th');
+            renderInline(cell, th);
+            headerRow.appendChild(th);
+          });
+          thead.appendChild(headerRow);
+          table.appendChild(thead);
+          const tbody = document.createElement('tbody');
+          rows.forEach((row) => {
+            const tr = document.createElement('tr');
+            row.forEach((cell) => {
+              const td = document.createElement('td');
+              renderInline(cell, td);
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+          table.appendChild(tbody);
+          container.appendChild(table);
+          continue;
+        }
+
+        if (/^\s*[\*\-\+]\s+/.test(line)) {
+          const stack = [];
+          while (i < lines.length && /^\s*[\*\-\+]\s+/.test(lines[i])) {
+            const m = lines[i].match(/^(\s*)[\*\-\+]\s+(.*)$/);
+            const indent = m[1].length;
+            const itemText = m[2];
+
+            while (stack.length > 0 && stack[stack.length - 1].indent > indent) {
+              stack.pop();
+            }
+
+            let ul;
+            if (stack.length === 0) {
+              ul = document.createElement('ul');
+              container.appendChild(ul);
+              stack.push({ ul, indent });
+            } else if (stack[stack.length - 1].indent < indent) {
+              ul = document.createElement('ul');
+              const parentUl = stack[stack.length - 1].ul;
+              const lastLi = parentUl.lastChild;
+              if (lastLi) {
+                lastLi.appendChild(ul);
+              } else {
+                parentUl.appendChild(ul);
+              }
+              stack.push({ ul, indent });
+            } else {
+              ul = stack[stack.length - 1].ul;
+            }
+
+            const li = document.createElement('li');
+            renderInline(itemText, li);
+            ul.appendChild(li);
+            i++;
+          }
+          continue;
+        }
+
+        if (/^\s*\d+\.\s+/.test(line)) {
+          const ol = document.createElement('ol');
+          while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+            const m = lines[i].match(/^\s*\d+\.\s+(.*)$/);
+            const li = document.createElement('li');
+            renderInline(m[1], li);
+            ol.appendChild(li);
+            i++;
+          }
+          container.appendChild(ol);
+          continue;
+        }
+
+        const paraLines = [];
+        while (i < lines.length) {
+          const t = lines[i].trim();
+          const l = lines[i];
+          if (t === '' || t === '---') break;
+          if (/^#{1,6}\s/.test(t)) break;
+          if (t.startsWith('>')) break;
+          if (/^\s*[\*\-\+]\s+/.test(l)) break;
+          if (/^\s*\d+\.\s+/.test(l)) break;
+          if (t.startsWith('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1])) break;
+          paraLines.push(lines[i]);
+          i++;
+        }
+        if (paraLines.length) {
+          const p = document.createElement('p');
+          renderInline(paraLines.join('\n'), p);
+          container.appendChild(p);
+        }
+      }
+    }
+
     function renderBlocks(blocks) {
       const frag = document.createDocumentFragment();
       blocks.forEach((b) => {
@@ -762,14 +1061,14 @@
         if (b.question) {
           const qEl = document.createElement('div');
           qEl.className = 'q';
-          qEl.textContent = b.question;
+          renderInline(b.question, qEl);
           wrap.appendChild(qEl);
         }
 
         if (b.answer) {
           const aEl = document.createElement('div');
           aEl.className = 'a';
-          aEl.textContent = b.answer;
+          renderMarkdown(b.answer, aEl);
           wrap.appendChild(aEl);
         }
 

@@ -1,4 +1,4 @@
-# Gemini Q&A Formatter
+# AI Q&A Formatter
 
 *[Korean version below](#korean-version)*
 
@@ -6,9 +6,9 @@ A Chrome extension that removes unnecessary metadata from exported AI conversati
 
 ## 💡 Why I Built This
 
-When exporting or backing up conversations with AI chatbots (especially Gemini), the extracted text often includes unnecessary metadata along with the actual conversation, such as sender info (`> From:`), message time (`message time:`), and divider lines (`---`).
+When exporting or backing up conversations with AI chatbots (e.g., Gemini, ChatGPT, Claude), the extracted text often includes unnecessary metadata along with the actual conversation, such as sender info (`> From:`), message time (`message time:`), and divider lines (`---`).
 
-Manually deleting this unnecessary text every time is quite tedious. Therefore, I built this formatter extension to strictly parse only the user's **questions (# you asked)** and the AI's **answers (# gemini response)**, and to refine the text for better readability (e.g., highlighting questions in bold blue text).
+Manually deleting this unnecessary text every time is quite tedious. Therefore, I built this formatter extension to strictly parse only the user's **questions (# you asked)** and the AI's **answers (eg. # gemini response)**, and to refine the text for better readability (e.g., highlighting questions in bold blue text).
 
 ## 🔗 Required Companion Extension
 
