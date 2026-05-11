@@ -42,8 +42,7 @@ This extension is highly optimized to format text structures exported by the fol
 5. Check the cleanly formatted Q&A result without metadata on the right, and use **[📋 Copy Rich Text]** to paste it directly into Google Docs, Notion, or your blog!
 
 ## 🏛️ Reflections
-- 
-
+- Quickly prototyped and asked for feedback.-> Still needed better formatting, rather than keeping the **, ###, >, etc. symbols in the output. So iterated on that and made them bold, different color, well-formatted chart.
 
 ---
 
