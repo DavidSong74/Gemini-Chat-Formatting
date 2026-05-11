@@ -41,6 +41,10 @@ This extension is highly optimized to format text structures exported by the fol
 4. Click the **[✨ Format]** button.
 5. Check the cleanly formatted Q&A result without metadata on the right, and use **[📋 Copy Rich Text]** to paste it directly into Google Docs, Notion, or your blog!
 
+## 🏛️ Reflections
+- 
+
+
 ---
 
 <h1 id="korean-version">제미나이 Q&A 포맷터 (Gemini Q&A Formatter)</h1>

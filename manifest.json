@@ -1,10 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "제미나이 Q&A 포맷터",
-  "version": "1.0",
-  "description": "제미나이 대화에서 메타데이터를 제거하고 깔끔한 Q&A 형태로 정리해주는 확장 프로그램입니다.",
+  "name": "AI Q&A Formatter",
+  "version": "1.1",
+  "description": "Strips metadata from exported AI chats (ChatGPT, Claude, Gemini, Grok, DeepSeek, Copilot, NotebookLM, Google AI, etc.) and formats them into clean Q&A blocks. Korean/English toggle.",
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "제미나이 Q&A 포맷터"
+    "default_title": "AI Q&A Formatter",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   }
 }

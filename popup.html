@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <title>제미나이 Q&A 포맷터</title>
+  <title>AI Q&A Formatter</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -65,17 +65,8 @@
       gap: 12px;
     }
 
-    .shell-title {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .shell-title-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .shell-title { display: flex; flex-direction: column; gap: 2px; }
+    .shell-title-row { display: flex; align-items: center; gap: 8px; }
 
     .shell-label {
       font-size: 10px;
@@ -104,16 +95,14 @@
       color: var(--text-muted);
     }
 
-    .shell-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin: 4px 0 0 0;
-    }
+    .shell-desc { font-size: 11px; color: var(--text-muted); margin: 4px 0 0 0; max-width: 480px; }
 
     .shell-actions {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .pill-btn {
@@ -132,7 +121,7 @@
 
     .pill-btn span.icon { font-size: 12px; }
     .pill-btn:hover { border-color: #cbd5e1; color: var(--text); }
-    
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -200,7 +189,7 @@
     textarea::placeholder { color: #94a3b8; }
     textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
 
-    .button-row { display: flex; gap: 6px; }
+    .button-row { display: flex; gap: 6px; flex-wrap: wrap; }
 
     .btn {
       border-radius: var(--radius-pill);
@@ -244,10 +233,25 @@
     .qa-block { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; }
     .qa-block:last-child { border-bottom: none; padding-bottom: 0; }
     .q { color: #1d4ed8; font-weight: 700; margin-bottom: 4px; }
-    .a { color: #0f172a; white-space: pre-wrap; }
+    .a { color: #0f172a; }
+
+    .a p { margin: 3px 0 6px; line-height: 1.55; }
+    .a .md-heading { font-weight: 700; margin: 10px 0 3px; font-size: 12.5px; color: #0f172a; }
+    .a blockquote { margin: 7px 0; padding: 5px 10px; border-left: 3px solid #94a3b8; background: var(--panel-soft); border-radius: 4px; color: var(--text); }
+    .a blockquote p { margin: 0; }
+    .a ul, .a ol { margin: 4px 0 8px; padding-left: 18px; }
+    .a li { margin-bottom: 3px; }
+    .a li > ul, .a li > ol { margin: 3px 0; }
+    .a code { background: var(--panel-soft); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; font-family: var(--mono); font-size: 0.9em; }
+    .q code { background: rgba(29, 78, 216, 0.08); border: 1px solid rgba(29, 78, 216, 0.25); border-radius: 4px; padding: 1px 4px; font-family: var(--mono); font-size: 0.9em; }
+    .a table { border-collapse: collapse; margin: 8px 0; width: 100%; font-size: 11.5px; }
+    .a th, .a td { border: 1px solid var(--border); padding: 4px 8px; text-align: left; vertical-align: top; }
+    .a th { background: var(--panel-soft); font-weight: 600; }
+    .a strong { font-weight: 700; }
+    .a em, .q em { font-style: italic; }
 
     .shortcut { font-family: var(--mono); font-size: 10px; background: var(--panel-soft); border: 1px solid var(--border); border-radius: 4px; padding: 1px 4px; }
-    
+
     .toast {
       position: absolute;
       bottom: 16px;
@@ -284,14 +288,22 @@
       <header class="shell-header">
         <div class="shell-title">
           <div class="shell-title-row">
-            <div class="shell-label">qa-포맷터</div>
+            <div class="shell-label" data-i18n="label">qa-포메터</div>
           </div>
-          <h1>제미나이 Q&amp;A 포맷터 <span class="sub">메타데이터 제거, 질문은 파란색 굵은 글씨로</span></h1>
-          <p class="shell-desc">왼쪽에 텍스트를 붙여넣으세요. 메타데이터를 무시하고 질문과 답변만 남깁니다.</p>
+          <h1>
+            <span data-i18n="h1">AI Q&amp;A 채팅 포메터</span>
+            <span class="sub" data-i18n="sub">메타데이터 제거, 질문은 파란색 굵은 글씨로</span>
+          </h1>
+          <p class="shell-desc" data-i18n="desc">왼쪽에 AI 채팅 텍스트를 붙여넣으세요. 메타데이터를 무시하고 질문과 답변만 남깁니다.</p>
         </div>
         <div class="shell-actions">
+          <button class="pill-btn" type="button" id="langToggle">
+            <span class="icon">🌐</span>
+            <span data-i18n="langToggle">English</span>
+          </button>
           <button class="pill-btn" type="button" id="loadSample">
-            <span class="icon">📎</span> 샘플 불러오기
+            <span class="icon">📎</span>
+            <span data-i18n="loadSample">샘플 불러오기</span>
           </button>
         </div>
       </header>
@@ -300,26 +312,28 @@
         <section class="panel">
           <div class="panel-header">
             <div class="panel-header-left">
-              <div class="panel-title">원본 제미나이 텍스트</div>
-              <div class="panel-badge">입력</div>
+              <div class="panel-title" data-i18n="inputTitle">원본 AI 채팅 텍스트</div>
+              <div class="panel-badge" data-i18n="inputBadge">입력</div>
             </div>
             <div class="panel-header-right">
               <span class="shortcut">⌘+V</span>
             </div>
           </div>
           <div class="panel-body">
-            <textarea id="input" placeholder="여기에 제미나이 텍스트를 붙여넣으세요..."></textarea>
+            <textarea id="input" data-i18n-placeholder="inputPlaceholder"></textarea>
             <div class="button-row">
               <button class="btn primary" type="button" id="formatBtn">
-                <span class="icon">✨</span> 포맷팅
+                <span class="icon">✨</span>
+                <span data-i18n="format">포맷팅</span>
               </button>
               <button class="btn" type="button" id="clearBtn">
-                <span class="icon">🧹</span> 지우기
+                <span class="icon">🧹</span>
+                <span data-i18n="clear">지우기</span>
               </button>
             </div>
             <div class="status-line" id="statusLine">
               <span class="status-dot" id="statusDot"></span>
-              <span id="statusText">대기 중. 제미나이 텍스트를 붙여넣고 포맷팅을 클릭하세요.</span>
+              <span id="statusText"></span>
             </div>
           </div>
         </section>
@@ -327,23 +341,23 @@
         <section class="panel">
           <div class="panel-header">
             <div class="panel-header-left">
-              <div class="panel-title">포맷된 Q&amp;A</div>
-              <div class="panel-badge">출력</div>
+              <div class="panel-title" data-i18n="outputTitle">포맷된 Q&amp;A</div>
+              <div class="panel-badge" data-i18n="outputBadge">출력</div>
             </div>
-            <div class="panel-header-right">질문 = 파란색 굵은 글씨</div>
+            <div class="panel-header-right" data-i18n="questionsBlue">질문 = 파란색 굵은 글씨</div>
           </div>
           <div class="panel-body">
             <div class="button-row">
               <button class="btn primary" type="button" id="copyRichBtn">
-                <span class="icon">📋</span> 서식 있는 텍스트 복사
+                <span class="icon">📋</span>
+                <span data-i18n="copyRich">서식 있는 텍스트 복사</span>
               </button>
               <button class="btn" type="button" id="copyPlainBtn">
-                <span class="icon">📄</span> 일반 텍스트 복사
+                <span class="icon">📄</span>
+                <span data-i18n="copyPlain">일반 텍스트 복사</span>
               </button>
             </div>
-            <div class="output-scroll" id="output">
-              <div class="output-empty">포맷팅된 결과가 여기에 표시됩니다.</div>
-            </div>
+            <div class="output-scroll" id="output"></div>
           </div>
         </section>
       </main>
@@ -353,7 +367,7 @@
   <div class="toast" id="toast" style="display:none;">
     <div class="toast-inner" id="toastInner">
       <span class="icon" id="toastIcon">✅</span>
-      <span id="toastText">클립보드에 복사되었습니다.</span>
+      <span id="toastText"></span>
     </div>
   </div>
 
